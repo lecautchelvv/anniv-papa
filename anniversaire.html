@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>🎉 Joyeux Anniversaire Papa 🎉</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: "Comic Sans MS", cursive, sans-serif;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: white;
+      flex-direction: column;
+    }
+    #message {
+      display: none;
+      max-width: 80%;
+      font-size: 1.8rem;
+      line-height: 1.6;
+      text-shadow: 2px 2px 6px rgba(0,0,0,0.4);
+      animation: fadeIn 2s ease forwards, float 4s ease-in-out infinite;
+    }
+    #youtube-link {
+      display: none;
+      margin-top: 2rem;
+      font-size: 1.3rem;
+      color: yellow;
+      text-decoration: underline;
+      cursor: pointer;
+      animation: fadeIn 2s ease forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes float {
+      0% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-10px) scale(1.05); }
+      100% { transform: translateY(0) scale(1); }
+    }
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Canvas pour confettis -->
+  <canvas id="confetti"></canvas>
+
+  <!-- Message -->
+  <div id="message">
+    <h1>💖 Coucou Papa 💖</h1>
+    <p>
+      Je voulais te dire que je t’aime et que je te souhaite un joyeux anniversaire 🎂<br>
+      Aujourd’hui tu as 48 ans et c’est pas fini lol 😁<br>
+      N’oublie jamais que tu es le 1er (avec maman 💕) dans mon cœur ❤️<br>
+      Merci pour tout ce que tu fais pour moi, tu es le meilleur papa du monde 🌍✨  
+    </p>
+  </div>
+
+  <!-- Lien YouTube -->
+  <div id="youtube-link">👉 Clique ici pour ta musique spéciale 🎶</div>
+
+  <!-- Son explosion -->
+  <audio id="boom-sound" src="https://www.soundjay.com/mechanical/sounds/explosion-01.mp3" preload="auto"></audio>
+
+  <script>
+    // 🎉 Confettis
+    const canvas = document.getElementById("confetti");
+    const ctx = canvas.getContext("2d");
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    let particles = [];
+
+    function Particle(x, y) {
+      this.x = x;
+      this.y = y;
+      this.size = Math.random() * 10 + 6;
+      const angle = Math.random() * 2 * Math.PI;
+      const speed = Math.random() * 12 + 6; // plus rapide et plus loin
+      this.speedX = Math.cos(angle) * speed;
+      this.speedY = Math.sin(angle) * speed;
+      this.gravity = 0.2;
+      this.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+      this.life = 200;
+
+      this.update = function() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.speedY += this.gravity;
+        this.life--;
+      };
+
+      this.draw = function() {
+        ctx.fillStyle = this.color;
+        ctx.fillRect(this.x, this.y, this.size, this.size);
+      };
+    }
+
+    function createBigExplosion(x, y) {
+      for (let i = 0; i < 1500; i++) { // énorme quantité → plein écran
+        particles.push(new Particle(x, y));
+      }
+      document.getElementById("boom-sound").play();
+    }
+
+    function handleParticles() {
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+        if (particles[i].life <= 0) {
+          particles.splice(i, 1);
+          i--;
+        }
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      handleParticles();
+      if (particles.length > 0) {
+        requestAnimationFrame(animate);
+      } else {
+        // Quand les confettis sont finis → afficher le message
+        document.getElementById("message").style.display = "block";
+        setTimeout(() => {
+          document.getElementById("youtube-link").style.display = "block";
+        }, 3000);
+      }
+    }
+
+    // 🚀 Explosion au chargement
+    window.onload = () => {
+      createBigExplosion(canvas.width / 2, canvas.height / 2);
+      animate();
+    };
+
+    // 🔗 Redirection vers YouTube
+    document.getElementById("youtube-link").onclick = () => {
+      window.location.href = "https://www.youtube.com/watch?v=l04BpnlteSY&list=RDl04BpnlteSY&start_radio=1";
+    };
+  </script>
+</body>
+</html>
